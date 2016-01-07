@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import android.util.Log;
 import com.android.reverse.hook.HookHelperFacktory;
 import com.android.reverse.hook.HookHelperInterface;
 import com.android.reverse.hook.HookParam;
@@ -59,7 +60,8 @@ public class DexFileInfoCollecter{
 				String dexPath = (String) param.args[0];
 				int mCookie = (Integer) param.getResult();
 				if (mCookie != 0) {
-					dynLoadedDexInfo.put(dexPath, new DexFileInfo(dexPath,mCookie));
+                    Log.i("mCookie", "dexFile:" + dexPath + "cookie:" + mCookie);
+                    dynLoadedDexInfo.put(dexPath, new DexFileInfo(dexPath,mCookie));
 				}
 			}
 		});
@@ -114,6 +116,7 @@ public class DexFileInfoCollecter{
 			String mFileName = (String) RefInvoke.getFieldOjbect("dalvik.system.DexFile", dexFile, "mFileName");
 			int mCookie = RefInvoke.getFieldInt("dalvik.system.DexFile", dexFile, "mCookie");
 			DexFileInfo dexinfo = new DexFileInfo(mFileName, mCookie, pathClassLoader);
+            Log.i("mCookie", "dexFile1:" + mFileName + " mCookie:" + mCookie);
 			dexs.put(mFileName, dexinfo);
 		}
 		return dexs;
@@ -150,6 +153,24 @@ public class DexFileInfoCollecter{
 			e.printStackTrace();
 		}
 	}
+
+    public void backsmaliDexFileWithCookie(String filename, String cookie) {
+        File file = new File(filename);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            int mCookie = Integer.parseInt(cookie);
+            if (mCookie != 0) {
+                MemoryBackSmali.disassembleDexFile(mCookie, filename);
+            } else {
+                Logger.log("the cookie is not right");
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 	
 	public void dumpDexFile(String filename, String dexPath) {
 		File file = new File(filename);
