@@ -18,7 +18,9 @@ public class CommandHandlerParser {
 
 	private static String ACTION_DUMP_DEXFILE = "dump_dexfile";
 	private static String ACTION_BACKSMALI_DEXFILE = "backsmali";
+    private static String ACTION_BACKSMALI_COOKIE_DEXFILE = "backsmali_cookie";
 	private static String PARAM_DEXPATH_DUMP_DEXFILE = "dexpath";
+    private static String PARAM_DEXPATH_DUMP_COOKIE = "cookie";
 
 	private static String ACTION_DUMP_MEMERY = "dump_mem";
 	private static String PARAM_START_DUMP_MEMERY = "startaddr";
@@ -49,7 +51,14 @@ public class CommandHandlerParser {
 				} else {
 					Logger.log("please set the " + PARAM_DEXPATH_DUMPDEXCLASS + " value");
 				}
-			} else if (ACTION_DUMP_DEXCLASS.equals(action)) {
+			} else if (ACTION_BACKSMALI_COOKIE_DEXFILE.equals(action)) {
+                if (jsoncmd.has(PARAM_DEXPATH_DUMP_COOKIE)) {
+                    String cookie = jsoncmd.getString(PARAM_DEXPATH_DUMP_COOKIE);
+                    handler = new BackSmaliCookieCommandHandler(cookie);
+                } else {
+                    Logger.log("please set the " + PARAM_DEXPATH_DUMP_COOKIE + " value");
+                }
+            } else if (ACTION_DUMP_DEXCLASS.equals(action)) {
 				if (jsoncmd.has(PARAM_DEXPATH_DUMPDEXCLASS)) {
 					String dexpath = jsoncmd.getString(PARAM_DEXPATH_DUMP_DEXFILE);
 					handler = new DumpClassCommandHandler(dexpath);
